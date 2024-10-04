@@ -29,12 +29,30 @@
 
 %% Setting paths for the cell registration procedure:
 
+% % % % data_path='/home/dariobolli/Desktop/Github/CellReg/';
+% % % % 
+% % % % % Defining the results_directory and creating the figures_directory:
+% % % % results_directory=fullfile(data_path,'SampleData','Results') ;
+% % % % 
+% % % % figures_directory=fullfile(results_directory,'Figures');
+% % % % if exist(figures_directory,'dir')~=7
+% % % %     mkdir(figures_directory);
+% % % % end
+% % % % 
+% % % % figures_visibility='on'; % either 'on' or 'off' (in any case figures are saved)
+% % % % 
+% % % % % define file names of sample data:
+% % % % number_of_sessions=5;
+% % % % file_names=cell(1,number_of_sessions);
+% % % % for file_index=1:number_of_sessions
+% % % %     file_names{file_index}=fullfile(data_path,'SampleData',sprintf('spatial_footprints_0%1i.mat',file_index));
+% % % % end
+
 % Defining the data directory:
-data_path='D:\dev\Cell registration\CellReg';
+data_path='/home/dariobolli/Desktop/Github/CellReg/Dystonia_Data/';  
 
 % Defining the results_directory and creating the figures_directory:
-results_directory=fullfile(data_path,'SampleData','Results') ;
-
+results_directory=fullfile(data_path,'Neuron_Tracking_Analysis','Results') ;%SampleData
 figures_directory=fullfile(results_directory,'Figures');
 if exist(figures_directory,'dir')~=7
     mkdir(figures_directory);
@@ -43,10 +61,12 @@ end
 figures_visibility='on'; % either 'on' or 'off' (in any case figures are saved)
 
 % define file names of sample data:
-number_of_sessions=5;
+myFiles = dir(fullfile(data_path,'*.mat'));
+number_of_sessions=length(myFiles); %5
 file_names=cell(1,number_of_sessions);
 for file_index=1:number_of_sessions
-    file_names{file_index}=fullfile(data_path,'SampleData',sprintf('spatial_footprints_0%1i.mat',file_index));
+%     file_names{file_index}=fullfile(data_path,'SampleData',sprintf('spatial_footprints_0%1i.mat',file_index)); 
+      file_names{file_index}=fullfile(data_path,myFiles(file_index).name);
 end
         
 %% Stage 1 - Loading the spatial footprints of cellular activity:
@@ -65,7 +85,7 @@ disp('Done')
 
 %% Stage 2 - Aligning all the sessions to a reference coordinate system:
 % A rigid-body transformation is applied to all the sessions
-% according to a chosen reference ssseion. The alignment includes:
+% according to a chosen reference session. The alignment includes:
 % 1. Preparing the data for alignment
 % 2. Aligning all the sessions according to a reference coordinate system
 % 3. Evaluating how suitable the data is for longitudinal analysis
