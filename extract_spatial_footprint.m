@@ -1,79 +1,88 @@
-% Extract spatial footprint
-folder = '/home/dariobolli/Desktop/Github/CellReg/Dystonia_Data/NeuralData/';  
-myFiles = dir(fullfile(folder,'*.mat'));
-length(myFiles)
-%padding to have same size spatial footprints
+%file_path = 'C:\Users\Dario\Documents\Github\CellReg\';
+%file_name = 'neuron_42356_42356_RF_W9';
+%Sources2D_to_simple_mat(file_name, file_path);
+data_path = 'G:\My Drive\Data\';
+% define file names of sample data:
+myFiles = dir(fullfile(data_path,'**', '*BL1.mat'));
+number_of_files=length(myFiles)
+%loop over every neuron file
 y_dim = 0;
 x_dim = 0;
-for k = 1:length(myFiles)
-  file_name = myFiles(k).name;
-  load([folder,file_name], 'neuron');
-  %Define max window for padding
-  if size(neuron.Cn,1) > x_dim
-      x_dim = size(neuron.Cn,1);
-  end
-  if size(neuron.Cn,2) > y_dim
-    y_dim = size(neuron.Cn,2);
-  end
-   
+for file_index=1:number_of_files
+    %file_names{file_index}=fullfile(myFiles(file_index).folder,myFiles(file_index).name);
+
+    folder = myFiles(file_index).folder;
+    file_name = myFiles(file_index).name;
+    load(fullfile(folder,file_name), 'neuron');
+    %Define max window for padding
+    if size(neuron.Cn,1) > x_dim
+        x_dim = size(neuron.Cn,1);
+    end
+    if size(neuron.Cn,2) > y_dim
+      y_dim = size(neuron.Cn,2);
+    end
+
+    spatial_footprints = reshape(full(neuron.A),size(neuron.Cn,1),size(neuron.Cn,2),size(neuron.A,2));
+    spatial_footprints_CellReg = permute(spatial_footprints,[3,1,2]);
+    %Save spatial footprint
+    if not(isfolder([folder(1:end-4),'\spatial_footprints\']))
+        mkdir([folder(1:end-4),'\spatial_footprints\']);
+    end
+    save([folder(1:end-4),'\spatial_footprints\',file_name(8:end-4),'_spatial_footprints','.mat'],'spatial_footprints_CellReg');
 end
 
-% if exist(file_name(1:end-4),'dir')~=7
-%     mkdir(file_name(1:end-4));
-% end
+%% BL2
+myFiles = dir(fullfile(data_path,'**', '*BL2.mat'));
+number_of_files=length(myFiles)
 
-% Padding
-for k = 1:length(myFiles)
-  file_name = myFiles(k).name;
-  session_number = int2str(k);
-  load([folder,file_name], 'neuron');
-  %Reshape spatial masks
-  %neuron.A is stored as a sparse matrix (index of non-zero elements), need
-  %to convert to regular matrix to reshape
-  spatial_footprints = reshape(full(neuron.A),size(neuron.Cn,1),size(neuron.Cn,2),size(neuron.A,2));
-  
-  
-% % % %   %x padding
-% % % %   x_pad = x_dim-size(neuron.Cn,1);
-% % % %   %even padding needed on x dim
-% % % %   if mod(x_pad,2) == 0
-% % % %      x_pad = fix(x_pad/2);
-% % % %      spatial_footprints = padarray(spatial_footprints,[x_pad,0,0],0,'both');
-% % % %   %uneven padding needed on x dim
-% % % %   else
-% % % %       x_pad = fix(x_pad/2);
-% % % %       spatial_footprints = padarray(spatial_footprints,[x_pad,0,0],0,'both');
-% % % %       spatial_footprints = padarray(spatial_footprints,[1,0,0],0,'pre');
-% % % %   end
-% % % % 
-% % % %   %y padding
-% % % %   y_pad = y_dim-size(neuron.Cn,2);
-% % % %   %even padding needed on y dim
-% % % %   if mod(y_pad,2) == 0
-% % % %      y_pad = fix(y_pad/2);
-% % % %      spatial_footprints = padarray(spatial_footprints,[0,y_pad,0],0,'both');
-% % % %   %uneven padding needed on y dim
-% % % %   else
-% % % %       y_pad = fix(y_pad/2);
-% % % %       spatial_footprints = padarray(spatial_footprints,[0,y_pad,0],0,'both');
-% % % %       spatial_footprints = padarray(spatial_footprints,[0,1,0],0,'pre');
-% % % %   end
- 
-  %spatial_footprint = padarray(neuron.Cn,[x_pad y_pad],0,'both');
-  size(spatial_footprints)
-  
-  %Permute axes for cell reg
-  %NxMxK, where N is the number of neurons, M is the number of pixels in the y axis and K is the number of pixels in the x axis.
-  spatial_footprints_CellReg = permute(spatial_footprints,[3,1,2]);
-  size(spatial_footprints_CellReg)
-  %Save spatial footprint
-  
-  save([folder(1:end-11),file_name(1:end-4),'_spatial_footprints_',session_number,'.mat'],'spatial_footprints_CellReg');
-  
-%   % Display Neuron spatial map for a session (Correlation Cn of Fluorescence over time)
-%   h = heatmap(spatial_footprint,'GridVisible', 'off');
-%   s=struct(h);
-%   s.XAxis.Visible='off';
-%   s.YAxis.Visible='off';
-%   figure;
+%loop over every neuron file
+for file_index=1:number_of_files
+    %file_names{file_index}=fullfile(myFiles(file_index).folder,myFiles(file_index).name);
+
+    folder = myFiles(file_index).folder;
+    file_name = myFiles(file_index).name;
+    load(fullfile(folder,file_name), 'neuron');
+    %Define max window for padding
+    if size(neuron.Cn,1) > x_dim
+        x_dim = size(neuron.Cn,1);
+    end
+    if size(neuron.Cn,2) > y_dim
+      y_dim = size(neuron.Cn,2);
+    end
+
+    spatial_footprints = reshape(full(neuron.A),size(neuron.Cn,1),size(neuron.Cn,2),size(neuron.A,2));
+    spatial_footprints_CellReg = permute(spatial_footprints,[3,1,2]);
+    %Save spatial footprint
+    if not(isfolder([folder(1:end-4),'\spatial_footprints\']))
+        mkdir([folder(1:end-4),'\spatial_footprints\']);
+    end
+    save([folder(1:end-4),'\spatial_footprints\',file_name(8:end-4),'_spatial_footprints','.mat'],'spatial_footprints_CellReg');
 end
+
+%%W9
+myFiles = dir(fullfile(data_path,'**', '*W9.mat'));
+number_of_files=length(myFiles)
+%loop over every neuron file
+for file_index=1:number_of_files
+    %file_names{file_index}=fullfile(myFiles(file_index).folder,myFiles(file_index).name);
+
+    folder = myFiles(file_index).folder;
+    file_name = myFiles(file_index).name;
+    load(fullfile(folder,file_name), 'neuron');
+    %Define max window for padding
+    if size(neuron.Cn,1) > x_dim
+        x_dim = size(neuron.Cn,1);
+    end
+    if size(neuron.Cn,2) > y_dim
+      y_dim = size(neuron.Cn,2);
+    end
+
+    spatial_footprints = reshape(full(neuron.A),size(neuron.Cn,1),size(neuron.Cn,2),size(neuron.A,2));
+    spatial_footprints_CellReg = permute(spatial_footprints,[3,1,2]);
+    %Save spatial footprint
+    if not(isfolder([folder(1:end-4),'\spatial_footprints\']))
+        mkdir([folder(1:end-4),'\spatial_footprints\']);
+    end
+    save([folder(1:end-3),'\spatial_footprints\',file_name(8:end-4),'_spatial_footprints','.mat'],'spatial_footprints_CellReg');
+end
+%disp(['Padding size: ', x_dim, y_dim]);

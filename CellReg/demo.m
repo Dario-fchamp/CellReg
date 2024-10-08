@@ -48,12 +48,27 @@
 % % % %     file_names{file_index}=fullfile(data_path,'SampleData',sprintf('spatial_footprints_0%1i.mat',file_index));
 % % % % end
 
-% Defining the data directory:
-data_path='/home/dariobolli/Desktop/Github/CellReg/Dystonia_Data/';  
+% Defining the data directory
+% namedFolders contain all the spatial_footprints folders (for every
+% Subject).
+% Next step: iterate through each folder to run demo on the Subjects
+% session
+data_path='G:\My Drive\Data\';  
+myFiles = dir(fullfile(data_path,'**'));%\*spatial_footprints.mat
+length(myFiles)
+tbl = struct2table(myFiles);
+tbl.date = datetime(tbl.datenum,ConvertFrom="datenum");
+tbl = removevars(tbl,"datenum");
+% To find subsets of the data, index into the table. For instance, extract only the folders, and then exclude the . and .. folders.
+folders = tbl(tbl.isdir,:);
+namedFolders = folders(matches(folders.name,"spatial_footprints"),:)
+
 
 % Defining the results_directory and creating the figures_directory:
 results_directory=fullfile(data_path,'Neuron_Tracking_Analysis','Results') ;%SampleData
 figures_directory=fullfile(results_directory,'Figures');
+
+
 if exist(figures_directory,'dir')~=7
     mkdir(figures_directory);
 end
